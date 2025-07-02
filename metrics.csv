@@ -1,0 +1,13 @@
+Pelvis,Back,Neck,Chest,Shoulder,Elbow,Forearm,Wrist,Hip,Knee,Foot
+pelvic_tilt,lumbar_extension,neck_flex,SternumRRotZ,shoulder_add_r,elbow_flexion_r,pro_sup_r,wrist_dev_r,hip_flexion_r,knee_angle_r,ankle_angle_r
+pelvic_list,lumbar_bending,neck_tilt,SternumRRotX,shoulder_flex_r,elbow_varus_valg_r,pro_sup_l,wrist_flex_r,hip_adduction_r,knee_rotation_r,subtalar_angle_r
+pelvic_rotation,lumbar_rotation,neck_rot,SternumRRotY,shoulder_rot_r,elbow_flexion_l,,wrist_dev_l,hip_rotation_r,knee_adduction_r,mtp_angle_r
+pelvic_tx,,neck_tx1,SternumRX,shoulder_add_l,elbow_varus_valg_l,,wrist_flex_l,hip_flexion_l,knee_tz_r,ankle_angle_l
+pelvic_ty,,neck_ty1,SternumRY,shoulder_flex_l,,,,hip_adduction_l,knee_angle_l,subtalar_angle_l
+pelvic_tz,,neck_tz1,SternumRZ,shoulder_rot_l,,,,hip_rotation_l,knee_rotation_l,mtp_angle_l
+,,,SternumLRotZ,,,,,,knee_adduction_l,
+,,,SternumLRotX,,,,,,knee_tz_l,
+,,,SternumLRotY,,,,,,,
+,,,SternumLX,,,,,,,
+,,,SternumLY,,,,,,,
+,,,SternumLZ,,,,,,,
