@@ -21,11 +21,17 @@ def read_sto_file(path):
 
 dfs = {fname: read_sto_file(os.path.join(STO_FOLDER, fname)) for fname in sto_files}
 
-# Get all possible metrics (assuming all files have the same columns)
-all_metrics = ['pelvic_tilt', 'pelvic_list', 'pelvic_rotation', 'pelvic_tx', 'pelvic_ty', 'pelvic_tz', 'lumbar_extension', 'lumbar_bending', 'lumbar_rotation', 'neck_flex', 'neck_tilt', 'neck_rot', 'neck_tx1', 'neck_ty1', 'neck_tz1', 'SternumRRotZ', 'SternumRRotX', 'SternumRRotY', 'SternumRX', 'SternumRY', 'SternumRZ', 'SternumLRotZ', 'SternumLRotX', 'SternumLRotY', 'SternumLX', 'SternumLY', 'SternumLZ', 'shoulder_add_r', 'shoulder_flex_r', 'shoulder_rot_r', 'elbow_flexion_r', 'elbow_varus_valg_r', 'pro_sup_r', 'wrist_dev_r', 'wrist_flex_r', 'shoulder_add_l', 'shoulder_flex_l', 'shoulder_rot_l', 'elbow_flexion_l', 'elbow_varus_valg_l', 'pro_sup_l', 'wrist_dev_l', 'wrist_flex_l', 'hip_flexion_r', 'hip_adduction_r', 'hip_rotation_r', 'knee_angle_r', 'knee_rotation_r', 'knee_adduction_r', 'knee_tz_r', 'ankle_angle_r', 'subtalar_angle_r', 'mtp_angle_r', 'hip_flexion_l', 'hip_adduction_l', 'hip_rotation_l', 'knee_angle_l', 'knee_rotation_l', 'knee_adduction_l', 'knee_tz_l', 'ankle_angle_l', 'subtalar_angle_l', 'mtp_angle_l']
+# Define the mapping for file names to more readable names
+mapping = {
+    '0627G1squat_Kinematics_q.sto': 'Gabby squat 1',
+    '0627G2squat_Kinematics_q.sto': 'Gabby squat 2',
+    '0627H1squat_Kinematics_q.sto': 'Hannah squat 1',
+    '0627A1sprint_Kinematics_q.sto': 'Aaron sprint 1',
+    '0627H1sprint_Kinematics_q.sto': 'Hannah sprint 1',
+    '0627G1sprint_Kinematics_q.sto': 'Gabby sprint 1'
+}
 
-
-import pandas as pd
+# --- METRICS CONFIGURATION ---
 
 # Read the metrics.csv file
 metrics_df = pd.read_csv("metrics.csv")
@@ -37,6 +43,8 @@ for col in metrics_df.columns:
     metrics = [m for m in metrics_df[col].dropna() if str(m).strip() != ""]
     metric_groups[col] = metrics
 
+all_metrics = [metric for metrics in metric_groups.values() for metric in metrics]
+
 
 # --- DASH APP ---
 
@@ -44,33 +52,64 @@ app = dash.Dash(__name__)
 
 app.layout = html.Div([
     html.H2("Dynamic Kinematic Plotter"),
-    html.Div(
-        [
-            html.Div([
-                html.Label("Select Files:"),
-                dcc.Checklist(
-                    id='file-checklist',
-                    options=[{'label': f, 'value': f} for f in sto_files],
-                    value=[],
-                    inline=True
-                ),
-            ], style={'margin-right': '40px', 'minWidth': '250px', 'alignItems': 'center'}),  # <-- wider minWidth
-            # Dynamically create a checklist for each metric group
+    # Box around file selection
+    html.Div([
+        html.Label("Select Files:"),
+        dcc.Checklist(
+            id='file-checklist',
+            options=[{'label': mapping[f], 'value': f} for f in sto_files],
+            value=[],
+            inline=True
+        ),
+    ], style={
+        'margin-bottom': '20px',
+        'margin-right': '40px',
+        'minWidth': '250px',
+        'alignItems': 'center',
+        'border': '2px solid #888',
+        'borderRadius': '8px',
+        'padding': '16px',
+        'background': '#fafbfc'
+    }),
+    # Box around metrics selection (both rows)
+    html.Div([
+        # First row: first 5 metric groups
+        html.Div([
             *[
                 html.Div([
                     html.Label(f"{group} Metrics:"),
                     dcc.Checklist(
                         id=f"{group.lower()}-metrics",
-                        options=[{'label': m, 'value': m} for m in metrics],
-                        value=[] if metrics else [],
-                        inline=True  # <-- This keeps checkbox and label on the same line
+                        options=[{'label': m, 'value': m} for m in metric_groups[group]],
+                        value=[] if metric_groups[group] else [],
+                        inline=True
                     ),
-                ], style={'margin-right': '40px', 'minWidth': '200px'})  # <-- Add minWidth or width here
-                for group, metrics in metric_groups.items()
+                ], style={'margin-right': '40px', 'minWidth': '200px'})
+                for group in list(metric_groups.keys())[:5]
             ]
-        ],
-        style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'flex-start'}
-    ),
+        ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'flex-start', 'margin-bottom': '20px'}),
+        # Second row: next 6 metric groups
+        html.Div([
+            *[
+                html.Div([
+                    html.Label(f"{group} Metrics:"),
+                    dcc.Checklist(
+                        id=f"{group.lower()}-metrics",
+                        options=[{'label': m, 'value': m} for m in metric_groups[group]],
+                        value=[] if metric_groups[group] else [],
+                        inline=True
+                    ),
+                ], style={'margin-right': '40px', 'minWidth': '200px'})
+                for group in list(metric_groups.keys())[5:11]
+            ]
+        ], style={'display': 'flex', 'flex-direction': 'row', 'align-items': 'flex-start'}),
+    ], style={
+        'border': '2px solid #888',
+        'borderRadius': '8px',
+        'padding': '16px',
+        'background': '#f5f7fa',
+        'margin-bottom': '20px'
+    }),
     dcc.Graph(id='kinematic-plot')
 ])
 from dash.dependencies import ALL
@@ -105,6 +144,9 @@ def update_plot(selected_files, *selected_metrics_groups):
     )
     return fig
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8050))
+    # Uncomment the following lines to run on a server or cloud platform
+    # port = int(os.environ.get("PORT", 8050))
+    # app.run(debug=True, host="0.0.0.0", port=port)  # Run the app on all interfaces
 
-    app.run(debug=True, host="0.0.0.0", port=port)  # Run the app on all interfaces
+    # local run
+    app.run(debug=True)
