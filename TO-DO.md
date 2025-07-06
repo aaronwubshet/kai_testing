@@ -4,5 +4,6 @@ DONE * make it possible to compare specific angles across files in a single grap
 
 * figure out dual motion in open sim
 
-* figure out how to sync plotting of angles to open sim animation? 
+MIGHT NOT BE POSSIBLE OUTSIDE OF OPEN SIM ITSELF* figure out how to sync plotting of angles to open sim animation? 
+
 
