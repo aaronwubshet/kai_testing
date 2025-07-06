@@ -28,7 +28,8 @@ mapping = {
     '0627H1squat_Kinematics_q.sto': 'Hannah squat 1',
     '0627A1sprint_Kinematics_q.sto': 'Aaron sprint 1',
     '0627H1sprint_Kinematics_q.sto': 'Hannah sprint 1',
-    '0627G1sprint_Kinematics_q.sto': 'Gabby sprint 1'
+    '0627G1sprint_Kinematics_q.sto': 'Gabby sprint 1',
+    '0627ShootAround_Kinematics_q.sto': 'Sample shoot around',
 }
 
 # --- METRICS CONFIGURATION ---
