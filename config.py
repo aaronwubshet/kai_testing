@@ -33,7 +33,7 @@ file_mapping = {
 athlete_profiles = {
     'Gabby': {
         'name': 'Gabby Martinez',
-        'photo': 'images/gaby.jpeg',
+        'photo': 'images/gabby.jpeg',
         'age': 22,
         'weight': '125 lbs',
         'height': '5\'6"',
@@ -87,6 +87,13 @@ COLORS = {
 # --- APP SETTINGS ---
 APP_TITLE = "Dynamic Kinematic Plotter"
 DEBUG_MODE = True
+
+# --- DEPLOYMENT DETECTION ---
+# Detect if running on cloud platform
+IS_CLOUD_DEPLOYMENT = bool(os.environ.get("RENDER") or 
+                          os.environ.get("HEROKU") or 
+                          os.environ.get("VERCEL") or
+                          os.environ.get("PORT"))  # Generic cloud platform indicator
 
 # --- COMPONENT IDS ---
 COMPONENT_IDS = {

@@ -160,7 +160,7 @@ class NotesManager:
     
     @staticmethod
     def save_notes_to_file(key_takeaways, observations, recommendations):
-        """Save analysis notes to a timestamped file"""
+        """Save analysis notes to a timestamped file - LOCAL VERSION"""
         import datetime
         
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -191,6 +191,53 @@ class NotesManager:
             return filename, None
         except Exception as e:
             return None, str(e)
+    
+    @staticmethod
+    def generate_notes_content(key_takeaways, observations, recommendations):
+        """Generate notes content as string for download or database storage"""
+        import datetime
+        
+        content = []
+        content.append(f"Analysis Notes - {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        content.append("="*60)
+        content.append("")
+        
+        # Key Takeaways section
+        content.append("KEY TAKEAWAYS:")
+        content.append("-" * 15)
+        content.append(key_takeaways if key_takeaways else "(No key takeaways recorded)")
+        content.append("")
+        content.append("")
+        
+        # Observations section
+        content.append("OBSERVATIONS:")
+        content.append("-" * 20)
+        content.append(observations if observations else "(No observations recorded)")
+        content.append("")
+        content.append("")
+        
+        # Recommendations section
+        content.append("RECOMMENDED MOVEMENTS:")
+        content.append("-" * 25)
+        content.append(recommendations if recommendations else "(No recommendations recorded)")
+        
+        return "\n".join(content)
+    
+    @staticmethod
+    def create_download_link(content, filename=None):
+        """Create a download link for notes content"""
+        import base64
+        import datetime
+        
+        if filename is None:
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"analysis_notes_{timestamp}.txt"
+        
+        # Encode content for download
+        b64_content = base64.b64encode(content.encode()).decode()
+        download_url = f"data:text/plain;base64,{b64_content}"
+        
+        return download_url, filename
 
 
 # Initialize global instances

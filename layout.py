@@ -367,22 +367,47 @@ class NotesLayout:
                 ),
             ], style={'margin-bottom': '15px'}),
             
-            # Save button
-            html.Button(
-                "Save Notes",
-                id="save-notes-btn",
-                n_clicks=0,
-                style={
-                    'background-color': '#007bff',
-                    'color': 'white',
-                    'border': 'none',
-                    'padding': '10px 20px',
-                    'border-radius': '5px',
-                    'cursor': 'pointer',
-                    'width': '100%',
-                    'font-weight': 'bold'
-                }
-            ),
+            # Save and Download buttons
+            html.Div([
+                html.Button(
+                    "Save Notes (Local)",
+                    id="save-notes-btn",
+                    n_clicks=0,
+                    style={
+                        'background-color': '#007bff',
+                        'color': 'white',
+                        'border': 'none',
+                        'padding': '10px 20px',
+                        'border-radius': '5px',
+                        'cursor': 'pointer',
+                        'width': '48%',
+                        'font-weight': 'bold',
+                        'margin-right': '4%'
+                    }
+                ),
+                html.A(
+                    html.Button(
+                        "Download Notes",
+                        id="download-notes-btn",
+                        n_clicks=0,
+                        style={
+                            'background-color': '#28a745',
+                            'color': 'white',
+                            'border': 'none',
+                            'padding': '10px 20px',
+                            'border-radius': '5px',
+                            'cursor': 'pointer',
+                            'width': '100%',
+                            'font-weight': 'bold'
+                        }
+                    ),
+                    id="download-link",
+                    download="analysis_notes.txt",
+                    href="",
+                    target="_blank",
+                    style={'width': '48%', 'display': 'inline-block'}
+                )
+            ], style={'display': 'flex', 'width': '100%', 'margin-bottom': '10px'}),
             html.Div(id="save-status", style={'margin-top': '10px'})
         ], style={
             'flex': '1',

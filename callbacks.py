@@ -667,7 +667,8 @@ class NotesCallbacks:
             Input('recommendations-textarea', 'value'),
             prevent_initial_call=True
         )
-        def save_notes(n_clicks, key_takeaways_content, observations_content, recommendations_content):
+        def save_notes_local(n_clicks, key_takeaways_content, observations_content, recommendations_content):
+            """Save notes to local file (works for local development)"""
             if n_clicks > 0 and (key_takeaways_content or observations_content or recommendations_content):
                 filename, error = notes_manager.save_notes_to_file(
                     key_takeaways_content, 
@@ -677,13 +678,48 @@ class NotesCallbacks:
                 
                 if filename:
                     return html.Div([
-                        html.Span("✓ Notes saved to: ", style={'color': 'green'}),
-                        html.Code(filename, style={'background': '#f0f0f0', 'padding': '2px 4px'})
+                        html.Span("✓ Notes saved locally to: ", style={'color': 'green'}),
+                        html.Code(filename, style={'background': '#f0f0f0', 'padding': '2px 4px'}),
+                        html.Br(),
+                        html.Small("Note: On cloud platforms, use 'Download Notes' for persistent storage.", 
+                                 style={'color': '#666', 'font-style': 'italic'})
                     ])
                 else:
-                    return html.Div(f"Error saving notes: {error}", style={'color': 'red'})
+                    return html.Div([
+                        html.Span(f"⚠ Error saving locally: {error}", style={'color': 'orange'}),
+                        html.Br(),
+                        html.Small("Try using 'Download Notes' instead for cloud deployment.", 
+                                 style={'color': '#666', 'font-style': 'italic'})
+                    ])
             
             return ""
+
+        @app.callback(
+            [Output('download-link', 'href'),
+             Output('download-link', 'download')],
+            [Input('download-notes-btn', 'n_clicks'),
+             Input('key-takeaways-textarea', 'value'),
+             Input('observations-textarea', 'value'),
+             Input('recommendations-textarea', 'value')],
+            prevent_initial_call=True
+        )
+        def prepare_download(n_clicks, key_takeaways_content, observations_content, recommendations_content):
+            """Prepare notes for download (works on cloud platforms)"""
+            if n_clicks > 0 and (key_takeaways_content or observations_content or recommendations_content):
+                # Generate the notes content
+                content = notes_manager.generate_notes_content(
+                    key_takeaways_content,
+                    observations_content,
+                    recommendations_content
+                )
+                
+                # Create download link
+                download_url, filename = notes_manager.create_download_link(content)
+                
+                return download_url, filename
+            
+            # Return empty values if no content or not clicked
+            return "", "analysis_notes.txt"
 
 
 def register_all_callbacks(app):
