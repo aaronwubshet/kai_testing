@@ -1,1 +1,0 @@
-web: python [attempt1.py](http://_vscodecontentref_/0)

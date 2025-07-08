@@ -1241,8 +1241,8 @@ def update_video_source(selected_athlete, selected_exercise, selected_attempt, d
 
 if __name__ == "__main__":
     # Uncomment the following lines to run on a server or cloud platform
-    # port = int(os.environ.get("PORT", 8050))
-    # app.run(debug=True, host="0.0.0.0", port=port)  # Run the app on all interfaces
+    port = int(os.environ.get("PORT", 8050))
+    app.run(debug=True, host="0.0.0.0", port=port)  # Run the app on all interfaces
 
     # local run
-    app.run(debug=True)
+    # app.run(debug=True)
