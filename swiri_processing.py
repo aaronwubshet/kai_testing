@@ -15,6 +15,7 @@ def read_in_files(file_paths):
     
     dataframes = []
     for path in file_paths:
+        print(path)
         df = pd.read_csv(path, sep='\t', header=[3, 4])
         dataframes.append(df)
     
@@ -241,5 +242,5 @@ def multiple_pipeline(file_paths, angle_types=['shoulder', 'elbow', 'wrist', 'hi
 if __name__ == "__main__":
 
     # Example usage
-    file_paths = ['TRCfiles/0627G1squat.trc', 'TRCfiles/0627G2squat.trc', 'TRCfiles/0627H1squat.trc']
+    file_paths = ['TRCfiles/0627G1squat.trc']
     multiple_pipeline(file_paths, angle_types=[ 'knee_r','knee_l'])

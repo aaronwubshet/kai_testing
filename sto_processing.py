@@ -59,6 +59,6 @@ def static_plot(dfs_with_names, metrics=None):
 if __name__ == "__main__":
     dfs_with_names = process_files(['STOfiles/0627G1squat_Kinematics_q.sto',
                                     'STOfiles/0627G2squat_Kinematics_q.sto',])
-    # static_plot(dfs_with_names, metrics=['knee_rotation_r', 'knee_rotation_l'])
+    static_plot(dfs_with_names, metrics=['knee_rotation_r', 'knee_rotation_l'])
     
 
