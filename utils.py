@@ -48,33 +48,40 @@ class FileAnalyzer:
     @staticmethod
     def get_athlete_from_filename(filename):
         """Extract athlete name from filename"""
-        if 'G1' in filename or 'G2' in filename:
-            return 'Gabby'
-        elif 'H1' in filename:
-            return 'Hannah'
-        elif 'A1' in filename:
-            return 'Aaron'
+        import re
+        # Pattern: 4-digit date + 1-letter athlete code + 1+ digit attempt number
+        match = re.match(r'\d{4}([AGH])\d+', filename)
+        if match:
+            athlete_code = match.group(1)
+            if athlete_code == 'G':
+                return 'Gabby'
+            elif athlete_code == 'H':
+                return 'Hannah'
+            elif athlete_code == 'A':
+                return 'Aaron'
         return None
     
     @staticmethod
     def get_exercise_from_filename(filename):
         """Extract exercise type from filename"""
-        if 'squat' in filename.lower():
+        if 'overheadsquat' in filename.lower():
+            return 'overhead squat'
+        elif 'squat' in filename.lower():
             return 'squat'
-        elif 'sprint' in filename.lower():
-            return 'sprint'
-        elif 'shootaround' in filename.lower():
-            return 'shootaround'
+        elif 'pushup' in filename.lower():
+            return 'push up'
+        elif 'standingjump' in filename.lower():
+            return 'vertical jump'
         return None
     
     @staticmethod
     def get_attempt_from_filename(filename):
         """Extract attempt number from filename"""
-        if 'G1' in filename or 'H1' in filename or 'A1' in filename:
-            return 1
-        elif 'G2' in filename:
-            return 2
-        # Add more attempt logic as needed
+        import re
+        # Pattern: 4-digit date + 1-letter athlete code + capture 1+ digit attempt number
+        match = re.match(r'\d{4}[AGH](\d+)', filename)
+        if match:
+            return int(match.group(1))
         return None
 
 
@@ -123,8 +130,20 @@ class HierarchicalSelector:
         if not athlete_prefix:
             return None
         
-        # Construct filename based on pattern: 0627{athlete_prefix}{attempt}{exercise}_Kinematics_q.sto
-        filename = f"0627{athlete_prefix}{attempt}{exercise}_Kinematics_q.sto"
+        # Map exercise names to filename patterns
+        exercise_mapping = {
+            'overhead squat': 'overheadsquat',
+            'squat': 'squat',
+            'push up': 'pushup',
+            'vertical jump': 'standingjump'
+        }
+        
+        exercise_pattern = exercise_mapping.get(exercise)
+        if not exercise_pattern:
+            return None
+        
+        # Construct filename based on pattern: 0708{athlete_prefix}{attempt}{exercise}_Kinematics_q.sto
+        filename = f"0708{athlete_prefix}{attempt}{exercise_pattern}_Kinematics_q.sto"
         
         # Check if the constructed filename exists in our files
         if filename in sto_files:
@@ -141,8 +160,20 @@ class HierarchicalSelector:
         if not athlete_prefix:
             return None
         
-        # Construct video filename: 0627{athlete_prefix}{attempt}{exercise}.webm
-        video_filename = f"0627{athlete_prefix}{attempt}{exercise}.webm"
+        # Map exercise names to filename patterns
+        exercise_mapping = {
+            'overhead squat': 'overheadsquat',
+            'squat': 'squat',
+            'push up': 'pushup',
+            'vertical jump': 'standingjump'
+        }
+        
+        exercise_pattern = exercise_mapping.get(exercise)
+        if not exercise_pattern:
+            return None
+        
+        # Construct video filename: 0708{athlete_prefix}{attempt}{exercise}.webm
+        video_filename = f"0708{athlete_prefix}{attempt}{exercise_pattern}.webm"
         return video_filename
     
     def get_files_for_athlete_exercise(self, athlete, exercise):
