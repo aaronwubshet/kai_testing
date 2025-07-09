@@ -6,7 +6,7 @@ Contains data processing, file handling, and analysis utilities
 
 import os
 import pandas as pd
-from config import sto_files, STO_FOLDER, athlete_prefix_mapping
+from config import sto_files, STO_FOLDER, athlete_id_mapping, id_to_athlete_mapping, workout_display_mapping, display_to_workout_mapping, athlete_prefix_mapping
 
 
 class DataProcessor:
@@ -47,39 +47,32 @@ class FileAnalyzer:
     
     @staticmethod
     def get_athlete_from_filename(filename):
-        """Extract athlete name from filename"""
+        """Extract athlete name from filename (new format: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto)"""
         import re
-        # Pattern: 4-digit date + 1-letter athlete code + 1+ digit attempt number
-        match = re.match(r'\d{4}([AGH])\d+', filename)
+        # Pattern: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto
+        match = re.match(r'\d{8}_(\d+)_[^_]+_\d+_', filename)
         if match:
-            athlete_code = match.group(1)
-            if athlete_code == 'G':
-                return 'Gabby'
-            elif athlete_code == 'H':
-                return 'Hannah'
-            elif athlete_code == 'A':
-                return 'Aaron'
+            athlete_id = match.group(1)
+            return id_to_athlete_mapping.get(athlete_id)
         return None
     
     @staticmethod
     def get_exercise_from_filename(filename):
-        """Extract exercise type from filename"""
-        if 'overheadsquat' in filename.lower():
-            return 'overhead squat'
-        elif 'squat' in filename.lower():
-            return 'squat'
-        elif 'pushup' in filename.lower():
-            return 'push up'
-        elif 'standingjump' in filename.lower():
-            return 'vertical jump'
+        """Extract exercise type from filename (new format: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto)"""
+        import re
+        # Pattern: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto
+        match = re.match(r'\d{8}_\d+_([^_]+)_\d+_', filename)
+        if match:
+            workout_name = match.group(1)
+            return workout_display_mapping.get(workout_name)
         return None
     
     @staticmethod
     def get_attempt_from_filename(filename):
-        """Extract attempt number from filename"""
+        """Extract attempt number from filename (new format: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto)"""
         import re
-        # Pattern: 4-digit date + 1-letter athlete code + capture 1+ digit attempt number
-        match = re.match(r'\d{4}[AGH](\d+)', filename)
+        # Pattern: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto
+        match = re.match(r'\d{8}_\d+_[^_]+_(\d+)_', filename)
         if match:
             return int(match.group(1))
         return None
@@ -122,28 +115,22 @@ class HierarchicalSelector:
         return sorted(list(attempts))
     
     def construct_filename_from_hierarchy(self, athlete, exercise, attempt):
-        """Construct filename from hierarchical selection"""
+        """Construct filename from hierarchical selection (new format: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto)"""
         if not all([athlete, exercise, attempt]):
             return None
         
-        athlete_prefix = athlete_prefix_mapping.get(athlete)
-        if not athlete_prefix:
+        athlete_id = athlete_id_mapping.get(athlete)
+        if not athlete_id:
             return None
         
-        # Map exercise names to filename patterns
-        exercise_mapping = {
-            'overhead squat': 'overheadsquat',
-            'squat': 'squat',
-            'push up': 'pushup',
-            'vertical jump': 'standingjump'
-        }
-        
-        exercise_pattern = exercise_mapping.get(exercise)
-        if not exercise_pattern:
+        # Map exercise display names to workout names
+        workout_name = display_to_workout_mapping.get(exercise)
+        if not workout_name:
             return None
         
-        # Construct filename based on pattern: 0708{athlete_prefix}{attempt}{exercise}_Kinematics_q.sto
-        filename = f"0708{athlete_prefix}{attempt}{exercise_pattern}_Kinematics_q.sto"
+        # Construct filename based on new pattern: MMDDYYYY_athleteID_workoutname_attemptNumber_Kinematics_q.sto
+        # Using the current date format from the renamed files
+        filename = f"07092025_{athlete_id}_{workout_name}_{attempt}_Kinematics_q.sto"
         
         # Check if the constructed filename exists in our files
         if filename in sto_files:
@@ -152,28 +139,21 @@ class HierarchicalSelector:
         return None
     
     def construct_video_filename(self, athlete, exercise, attempt):
-        """Construct video filename from hierarchical selection"""
+        """Construct video filename from hierarchical selection (new format: MMDDYYYY_athleteID_workoutname_attemptNumber.webm)"""
         if not all([athlete, exercise, attempt]):
             return None
         
-        athlete_prefix = athlete_prefix_mapping.get(athlete)
-        if not athlete_prefix:
+        athlete_id = athlete_id_mapping.get(athlete)
+        if not athlete_id:
             return None
         
-        # Map exercise names to filename patterns
-        exercise_mapping = {
-            'overhead squat': 'overheadsquat',
-            'squat': 'squat',
-            'push up': 'pushup',
-            'vertical jump': 'standingjump'
-        }
-        
-        exercise_pattern = exercise_mapping.get(exercise)
-        if not exercise_pattern:
+        # Map exercise display names to workout names
+        workout_name = display_to_workout_mapping.get(exercise)
+        if not workout_name:
             return None
         
-        # Construct video filename: 0708{athlete_prefix}{attempt}{exercise}.webm
-        video_filename = f"0708{athlete_prefix}{attempt}{exercise_pattern}.webm"
+        # Construct video filename: MMDDYYYY_athleteID_workoutname_attemptNumber.webm
+        video_filename = f"07092025_{athlete_id}_{workout_name}_{attempt}.webm"
         return video_filename
     
     def get_files_for_athlete_exercise(self, athlete, exercise):

@@ -4,8 +4,7 @@ Simplified Callbacks for the Kinematic Dashboard
 Hierarchical dropdown interface only
 """
 
-import os
-from dash import Input, Output, State, html, callback_context, dcc, clientside_callback, ClientsideFunction
+from dash import Input, Output, State, html, callback_context
 from dash.exceptions import PreventUpdate
 import dash
 import plotly.graph_objs as go
@@ -458,7 +457,6 @@ class ReportGenerationCallbacks:
     def register_callbacks(app):
         @app.callback(
             Output('report-status', 'children'),
-            Output('report-url-store', 'data'),
             [Input('generate-report-btn', 'n_clicks')],
             [State({'type': 'hierarchical-dropdown', 'layer': 'athlete'}, 'value')],
             prevent_initial_call=True
@@ -469,77 +467,41 @@ class ReportGenerationCallbacks:
                 raise PreventUpdate
                 
             if not selected_athlete:
-                return html.Div("Please select an athlete first", style={'color': 'red'}), None
+                return html.Div("Please select an athlete first", style={'color': 'red'})
             
             try:
-                # Import the report generator
-                from static_report.report_generator import KinematicReportGenerator
+                # Import and run the report generator
+                import sys
+                import os
+                # Add the static_report directory to the path
+                current_dir = os.path.dirname(os.path.abspath(__file__))
+                sys.path.append(os.path.join(current_dir, 'static_report'))
+                from report_generator import KinematicReportGenerator
                 
-                # Initialize generator
-                generator = KinematicReportGenerator("STOfiles")
+                # Initialize and run generator
+                generator = KinematicReportGenerator()
+                generator.process_all_files()
                 
-                # Process only files for the selected athlete (more efficient)
-                if not os.path.exists(generator.sto_folder):
-                    return html.Div("Data folder not found", style={'color': 'red'}), None
+                # Generate report for the selected athlete
+                report_path = generator.save_report(selected_athlete)
                 
-                sto_files = [f for f in os.listdir(generator.sto_folder) if f.endswith('.sto')]
-                if not sto_files:
-                    return html.Div("No data files found", style={'color': 'red'}), None
-                
-                # Process files for the specific athlete only
-                athlete_files_processed = 0
-                for filename in sto_files:
-                    filepath = os.path.join(generator.sto_folder, filename)
-                    file_info = generator.extract_athlete_info(filename)
-                    
-                    if file_info and file_info['athlete'] == selected_athlete:
-                        df = generator.read_sto_file(filepath)
-                        if df is not None:
-                            analysis = generator.analyze_movement_quality(df, file_info['exercise_key'])
-                            key = f"{file_info['athlete']}_{file_info['exercise']}_{file_info['attempt']}"
-                            generator.data[key] = {
-                                'info': file_info,
-                                'dataframe': df,
-                                'analysis': analysis,
-                                'filename': filename
-                            }
-                            athlete_files_processed += 1
-                
-                if athlete_files_processed == 0:
-                    return html.Div(f"No data found for {selected_athlete}", style={'color': 'red'}), None
-                
-                # Generate report with PDF download button
-                download_url, filename = generator.create_downloadable_report_with_pdf_option(selected_athlete)
-                
-                if download_url and filename:
+                if report_path:
+                    # Create a clickable link to the report
+                    report_filename = os.path.basename(report_path)
                     return html.Div([
                         html.P("✓ Report generated successfully!", style={'color': 'green', 'margin': '5px 0'}),
-                        html.P(f"Files processed: {athlete_files_processed}", style={'color': 'blue', 'margin': '5px 0'}),
-                        html.P("Opening report in new tab...", style={'color': 'blue', 'margin': '5px 0', 'font-size': '12px'})
-                    ]), download_url
+                        html.A(
+                            f"Open {report_filename}",
+                            href=f"/static_report/reports/{report_filename}",
+                            target="_blank",
+                            style={'color': 'blue', 'text-decoration': 'underline'}
+                        )
+                    ])
                 else:
-                    return html.Div("Failed to generate report", style={'color': 'red'}), None
+                    return html.Div("Failed to generate report", style={'color': 'red'})
                     
             except Exception as e:
-                return html.Div(f"Error: {str(e)}", style={'color': 'red'}), None
-        
-        # Client-side callback to automatically open report in new tab
-        app.clientside_callback(
-            """
-            function(report_url) {
-                if (report_url) {
-                    // Small delay to ensure the status message is shown first
-                    setTimeout(function() {
-                        window.open(report_url, '_blank');
-                    }, 500);
-                }
-                return '';
-            }
-            """,
-            Output('dummy-output', 'children'),
-            Input('report-url-store', 'data'),
-            prevent_initial_call=True
-        )
+                return html.Div(f"Error: {str(e)}", style={'color': 'red'})
 
 
 def register_all_callbacks(app):

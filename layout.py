@@ -1,48 +1,30 @@
 # -*- coding: utf-8 -*-
 """
 Layout components for the Kinematic Dashboard
-Contains all UI layout definitions and component structures
+Contains all layout definitions and component structures
 """
 
 from dash import dcc, html
 from config import (
-    APP_TITLE, athlete_profiles, file_mapping, sto_files, 
+    APP_TITLE, athlete_profiles, sto_files, 
     metric_groups, COLORS, COMPONENT_IDS
 )
 from utils import hierarchical_selector
 
 
 class HeaderLayout:
-    """Header section with title and debug toggle"""
+    """Header section with title"""
     
     @staticmethod
     def create():
         return html.Div([
-            html.H2(APP_TITLE, style={'margin': 0, 'flex': '1'}),
-            # Debug mode toggle in top right
-            html.Div([
-                html.Label("Debug Mode:", style={'margin-right': '8px', 'font-weight': 'bold'}),
-                dcc.Checklist(
-                    id=COMPONENT_IDS['debug_toggle'],
-                    options=[{'label': '', 'value': 'debug'}],
-                    value=[],
-                    inline=True,
-                    style={'margin-right': '5px'}
-                ),
-                html.Span("(Dropdowns)", style={'font-size': '12px', 'color': '#666'})
-            ], style={
-                'display': 'flex', 
-                'align-items': 'center',
-                'padding': '10px 15px',
-                'background': '#e8f4f8',
-                'border': f'1px solid {COLORS["primary"]}',
-                'border-radius': '5px'
-            })
+            html.H2(APP_TITLE, style={'margin': 0, 'text-align': 'center'})
         ], style={
-            'display': 'flex', 
-            'justify-content': 'space-between', 
-            'align-items': 'center',
-            'margin-bottom': '20px'
+            'margin-bottom': '20px',
+            'padding': '20px',
+            'background': f'linear-gradient(135deg, {COLORS["primary"]}, #2980b9)',
+            'color': 'white',
+            'border-radius': '10px'
         })
 
 
@@ -76,8 +58,6 @@ class AthleteProfileLayout:
                 AthleteProfileLayout.create_default()
             ])
         ], style={
-            'flex': '0 0 250px',
-            'margin-right': '20px',
             'border': f'2px solid {COLORS["primary"]}',
             'border-radius': '12px',
             'padding': '12px',
@@ -87,13 +67,48 @@ class AthleteProfileLayout:
         })
 
 
-class HierarchicalDropdownsLayout:
-    """Hierarchical dropdown system for debug mode"""
+class ReportGenerationLayout:
+    """Report generation controls"""
     
     @staticmethod
     def create():
         return html.Div([
-            html.Label("Hierarchical Selection:", style={'margin-bottom': '15px', 'font-weight': 'bold', 'font-size': '16px'}),
+            html.H4("Generate Static Report", style={'margin': '0 0 10px 0', 'color': COLORS['secondary'], 'font-size': '16px'}),
+            html.Button(
+                "Generate Movement Report",
+                id='generate-report-btn',
+                style={
+                    'width': '100%',
+                    'padding': '10px',
+                    'background': f'linear-gradient(135deg, {COLORS["primary"]}, #2980b9)',
+                    'color': 'white',
+                    'border': 'none',
+                    'border-radius': '6px',
+                    'cursor': 'pointer',
+                    'font-weight': 'bold',
+                    'font-size': '14px'
+                }
+            ),
+            html.Div(id='report-status', style={'margin-top': '10px'}),
+            # Hidden components for automatic report opening
+            dcc.Store(id='report-url-store'),
+            html.Div(id='dummy-output', style={'display': 'none'})
+        ], style={
+            'margin-top': '20px',
+            'border': f'2px solid {COLORS["secondary"]}',
+            'border-radius': '8px',
+            'padding': '15px',
+            'background': '#f8f9fa'
+        })
+
+
+class HierarchicalDropdownsLayout:
+    """Hierarchical dropdown system"""
+    
+    @staticmethod
+    def create():
+        return html.Div([
+            html.Label("Select Data to Analyze:", style={'margin-bottom': '15px', 'font-weight': 'bold', 'font-size': '18px', 'color': COLORS['primary']}),
             
             # Layer 1: Athlete Selection
             html.Div([
@@ -159,7 +174,7 @@ class HierarchicalDropdownsLayout:
                     style={'margin-bottom': '15px'}
                 )
             ], style={'margin-bottom': '15px'})
-        ], style={'width': '50%', 'margin-right': '15px'})
+        ], style={'width': '100%'})
 
 
 class SelectedMetricsLayout:
@@ -197,7 +212,7 @@ class SelectedMetricsLayout:
                 'max-height': '300px',
                 'overflow-y': 'auto'
             })
-        ], style={'width': '50%'})
+        ], style={'width': '100%'})
 
 
 class VideoAnalysisLayout:
@@ -227,35 +242,7 @@ class VideoAnalysisLayout:
         ])
 
 
-class FileSelectionLayout:
-    """File selection component for normal mode"""
-    
-    @staticmethod
-    def create_wrapper():
-        return html.Div(id='file-selection-wrapper')
-    
-    @staticmethod
-    def create_normal_mode():
-        return html.Div([
-            html.Label("Select Files:"),
-            html.Div(id=COMPONENT_IDS['file_selection'])
-        ], style={
-            'margin-bottom': '30px',
-            'border': '2px solid #888',
-            'borderRadius': '8px',
-            'padding': '16px',
-            'background': '#fafbfc'
-        })
-    
-    @staticmethod
-    def create_checklist():
-        return dcc.Checklist(
-            id={'type': 'file-selector', 'mode': 'checklist'},
-            options=[{'label': file_mapping[f], 'value': f} for f in sto_files],
-            value=[],
-            inline=True,
-            style={'margin-top': '10px'}
-        )
+# FileSelectionLayout class removed - no longer needed for hierarchical dropdown only interface
 
 
 class MetricsSelectionLayout:
@@ -430,26 +417,46 @@ class MainLayout:
             # Header
             HeaderLayout.create(),
             
-            # Top section with athlete profile and controls
+            # Top row: Three main sections
             html.Div([
-                # Left side: Athlete Profile
-                AthleteProfileLayout.create_container(),
-                
-                # Right side: Controls
+                # 1. Athlete Profile and Report Generation
                 html.Div([
-                    # File selection container (only shown in normal mode)
-                    FileSelectionLayout.create_wrapper(),
-                    
-                    # Box around metrics selection (dynamic based on debug mode)
+                    AthleteProfileLayout.create_container(),
+                    ReportGenerationLayout.create()
+                ], style={'flex': '0 0 250px', 'margin-right': '20px'}),
+                
+                # 2. Hierarchical dropdowns and Selected Metrics in same box
+                html.Div([
+                    # Left side: Hierarchical dropdowns
                     html.Div([
-                        html.Div(id=COMPONENT_IDS['metrics_container'])
-                    ], id='metrics-container-box', style={
-                        'border': '2px solid #888',
-                        'borderRadius': '8px',
-                        'padding': '16px',
-                        'background': '#f5f7fa'
-                    })
-                ], style={'flex': '1'})
+                        HierarchicalDropdownsLayout.create()
+                    ], style={'flex': '1', 'margin-right': '20px'}),
+                    
+                    # Right side: Selected Metrics
+                    html.Div([
+                        SelectedMetricsLayout.create()
+                    ], style={'flex': '1'})
+                ], style={
+                    'border': '2px solid #888',
+                    'border-radius': '8px',
+                    'padding': '16px',
+                    'background': '#f5f7fa',
+                    'flex': '1',
+                    'margin-right': '20px',
+                    'display': 'flex'
+                }),
+                
+                # 3. Video Analysis (50% of webpage width)
+                html.Div([
+                    VideoAnalysisLayout.create()
+                ], style={
+                    'border': f'2px solid {COLORS["danger"]}',
+                    'border-radius': '8px',
+                    'padding': '16px',
+                    'background': '#fff5f5',
+                    'width': '50%',
+                    'flex': '0 0 50%'
+                })
             ], style={'display': 'flex', 'margin-bottom': '20px'}),
             
             # Graph and Notes side by side

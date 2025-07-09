@@ -18,10 +18,17 @@ app.layout = MainLayout.create()
 register_all_callbacks(app)
 
 if __name__ == "__main__":
-    # For development
-    # app.run(debug=True)
-    
-    # For production (uncomment when deploying)
     import os
+    
+    # Check if running in production
     port = int(os.environ.get("PORT", 8050))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    debug = not bool(os.environ.get("RENDER") or 
+                    os.environ.get("HEROKU") or 
+                    os.environ.get("VERCEL"))
+    
+    if debug:
+        # For development
+        app.run(debug=True, port=port)
+    else:
+        # For production
+        app.run(debug=False, host="0.0.0.0", port=port)

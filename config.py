@@ -18,45 +18,8 @@ IMAGES_FOLDER = os.path.join(ASSETS_FOLDER, "images")
 sto_files = [f for f in os.listdir(STO_FOLDER) if f.endswith('.sto')]
 
 # --- FILE NAME MAPPINGS ---
-# Define the mapping for file names to more readable names
-file_mapping = {
-    '0708A1overheadsquat_Kinematics_q.sto': 'Aaron Overhead Squat 1',
-    '0708A2overheadsquat_Kinematics_q.sto': 'Aaron Overhead Squat 2',
-    '0708A3overheadsquat_Kinematics_q.sto': 'Aaron Overhead Squat 3',
-    '0708G1overheadsquat_Kinematics_q.sto': 'Gabby Overhead Squat 1',
-    '0708G2overheadsquat_Kinematics_q.sto': 'Gabby Overhead Squat 2',
-    '0708G3overheadsquat_Kinematics_q.sto': 'Gabby Overhead Squat 3',
-    '0708H1overheadsquat_Kinematics_q.sto': 'Hannah Overhead Squat 1',
-    '0708H2overheadsquat_Kinematics_q.sto': 'Hannah Overhead Squat 2',
-    '0708H3overheadsquat_Kinematics_q.sto': 'Hannah Overhead Squat 3',
-    '0708A1squat_Kinematics_q.sto': 'Aaron Squat 1',
-    '0708A2squat_Kinematics_q.sto': 'Aaron Squat 2',
-    '0708A3squat_Kinematics_q.sto': 'Aaron Squat 3',
-    '0708G1squat_Kinematics_q.sto': 'Gabby Squat 1',
-    '0708G2squat_Kinematics_q.sto': 'Gabby Squat 2',
-    '0708G3squat_Kinematics_q.sto': 'Gabby Squat 3',
-    '0708H1squat_Kinematics_q.sto': 'Hannah Squat 1',
-    '0708H2squat_Kinematics_q.sto': 'Hannah Squat 2',
-    '0708H3squat_Kinematics_q.sto': 'Hannah Squat 3',
-    '0708A1standingjump_Kinematics_q.sto': 'Aaron Vertical Jump 1',
-    '0708A2standingjump_Kinematics_q.sto': 'Aaron Vertical Jump 2',
-    '0708A3standingjump_Kinematics_q.sto': 'Aaron Vertical Jump 3',
-    '0708G1standingjump_Kinematics_q.sto': 'Gabby Vertical Jump 1',
-    '0708G2standingjump_Kinematics_q.sto': 'Gabby Vertical Jump 2',
-    '0708G3standingjump_Kinematics_q.sto': 'Gabby Vertical Jump 3',
-    '0708H1standingjump_Kinematics_q.sto': 'Hannah Vertical Jump 1',
-    '0708H2standingjump_Kinematics_q.sto': 'Hannah Vertical Jump 2',
-    '0708H3standingjump_Kinematics_q.sto': 'Hannah Vertical Jump 3',
-    '0708A1pushup_Kinematics_q.sto': 'Aaron Push Up 1',
-    '0708A2pushup_Kinematics_q.sto': 'Aaron Push Up 2',
-    '0708A3pushup_Kinematics_q.sto': 'Aaron Push Up 3',
-    '0708G1pushup_Kinematics_q.sto': 'Gabby Push Up 1',
-    '0708G2pushup_Kinematics_q.sto': 'Gabby Push Up 2',
-    '0708G3pushup_Kinematics_q.sto': 'Gabby Push Up 3',
-    '0708H1pushup_Kinematics_q.sto': 'Hannah Push Up 1',
-    '0708H2pushup_Kinematics_q.sto': 'Hannah Push Up 2',
-    '0708H3pushup_Kinematics_q.sto': 'Hannah Push Up 3'
-}
+# File mappings are now handled dynamically through the hierarchical selector
+# using the new naming convention: MMDDYYYY_athleteID_workoutname_attemptNumber_suffix.sto
 
 # --- ATHLETE PROFILES ---
 athlete_profiles = {
@@ -92,12 +55,35 @@ athlete_profiles = {
     }
 }
 
-# --- ATHLETE TO FILE PREFIX MAPPING ---
+# --- ATHLETE MAPPINGS ---
+# New athlete ID mapping (extensible for future athletes)
+athlete_id_mapping = {
+    'Aaron': '1',
+    'Gabby': '2',
+    'Hannah': '3'
+}
+
+# Reverse mapping for filename parsing
+id_to_athlete_mapping = {v: k for k, v in athlete_id_mapping.items()}
+
+# Legacy athlete prefix mapping (for backward compatibility)
 athlete_prefix_mapping = {
     'Gabby': 'G',
     'Hannah': 'H', 
     'Aaron': 'A'
 }
+
+# --- WORKOUT DISPLAY NAMES ---
+# Extensible mapping for workout names to display names
+workout_display_mapping = {
+    'overheadsquat': 'Overhead Squat',
+    'squat': 'Squat',
+    'pushup': 'Push Up',
+    'standingjump': 'Vertical Jump'
+}
+
+# Reverse mapping for filename construction
+display_to_workout_mapping = {v: k for k, v in workout_display_mapping.items()}
 
 # --- STYLING CONSTANTS ---
 COLORS = {
@@ -115,7 +101,6 @@ COLORS = {
 
 # --- APP SETTINGS ---
 APP_TITLE = "Dynamic Kinematic Plotter"
-DEBUG_MODE = True
 
 # --- DEPLOYMENT DETECTION ---
 # Detect if running on cloud platform
@@ -126,9 +111,7 @@ IS_CLOUD_DEPLOYMENT = bool(os.environ.get("RENDER") or
 
 # --- COMPONENT IDS ---
 COMPONENT_IDS = {
-    'debug_toggle': 'debug-toggle',
     'athlete_profile': 'athlete-profile-container',
-    'file_selection': 'file-selection-container',
     'metrics_container': 'metrics-selection-container',
     'video_player': 'video-player',
     'kinematic_plot': 'kinematic-plot',
@@ -137,20 +120,97 @@ COMPONENT_IDS = {
 }
 
 # --- METRICS CONFIGURATION ---
-try:
-    metrics_df = pd.read_csv("metrics.csv")
-    # Build the metric_groups dictionary from the CSV
-    metric_groups = {}
-    for col in metrics_df.columns:
-        # Drop NaN and empty strings, keep only valid metric names
-        metrics = [m for m in metrics_df[col].dropna() if str(m).strip() != ""]
-        metric_groups[col] = metrics
-    
-    all_metrics = [metric for metrics in metric_groups.values() for metric in metrics]
-except FileNotFoundError:
-    print("Warning: metrics.csv not found. Using empty metrics configuration.")
-    metric_groups = {}
-    all_metrics = []
+# Direct mapping of body parts to metrics (from metrics.csv)
+metric_groups = {
+    'Pelvis': [
+        'pelvic_tilt',
+        'pelvic_list',
+        'pelvic_rotation',
+        'pelvic_tx',
+        'pelvic_ty',
+        'pelvic_tz'
+    ],
+    'Back': [
+        'lumbar_extension',
+        'lumbar_bending',
+        'lumbar_rotation'
+    ],
+    'Neck': [
+        'neck_flex',
+        'neck_tilt',
+        'neck_rot',
+        'neck_tx1',
+        'neck_ty1',
+        'neck_tz1'
+    ],
+    'Chest': [
+        'SternumRRotZ',
+        'SternumRRotX',
+        'SternumRRotY',
+        'SternumRX',
+        'SternumRY',
+        'SternumRZ',
+        'SternumLRotZ',
+        'SternumLRotX',
+        'SternumLRotY',
+        'SternumLX',
+        'SternumLY',
+        'SternumLZ'
+    ],
+    'Shoulder': [
+        'shoulder_add_r',
+        'shoulder_flex_r',
+        'shoulder_rot_r',
+        'shoulder_add_l',
+        'shoulder_flex_l',
+        'shoulder_rot_l'
+    ],
+    'Elbow': [
+        'elbow_flexion_r',
+        'elbow_varus_valg_r',
+        'elbow_flexion_l',
+        'elbow_varus_valg_l'
+    ],
+    'Forearm': [
+        'pro_sup_r',
+        'pro_sup_l'
+    ],
+    'Wrist': [
+        'wrist_dev_r',
+        'wrist_flex_r',
+        'wrist_dev_l',
+        'wrist_flex_l'
+    ],
+    'Hip': [
+        'hip_flexion_r',
+        'hip_adduction_r',
+        'hip_rotation_r',
+        'hip_flexion_l',
+        'hip_adduction_l',
+        'hip_rotation_l'
+    ],
+    'Knee': [
+        'knee_angle_r',
+        'knee_rotation_r',
+        'knee_adduction_r',
+        'knee_tz_r',
+        'knee_angle_l',
+        'knee_rotation_l',
+        'knee_adduction_l',
+        'knee_tz_l'
+    ],
+    'Foot': [
+        'ankle_angle_r',
+        'subtalar_angle_r',
+        'mtp_angle_r',
+        'ankle_angle_l',
+        'subtalar_angle_l',
+        'mtp_angle_l'
+    ]
+}
+
+# Create a flat list of all metrics
+all_metrics = [metric for metrics in metric_groups.values() for metric in metrics]
 
 # --- GLOBAL STATE ---
 current_mode = {'debug': False}
