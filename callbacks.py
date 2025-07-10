@@ -508,15 +508,86 @@ class ReportGenerationCallbacks:
                 if athlete_files_processed == 0:
                     return html.Div(f"No data found for {selected_athlete}", style={'color': 'red'}), None
                 
-                # Generate report with PDF download button
-                download_url, filename = generator.create_downloadable_report_with_pdf_option(selected_athlete)
-                
-                if download_url and filename:
+                # Generate report and save to assets folder for serving
+                html_content = generator.generate_html_report(selected_athlete)
+                if html_content:
+                    # Add PDF download button to the report
+                    pdf_button_html = """
+                    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+                        <button onclick="window.print()" style="
+                            background-color: #007bff;
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: bold;
+                            box-shadow: 0 2px 5px rgba(0,123,255,0.3);
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.backgroundColor='#0056b3'" 
+                           onmouseout="this.style.backgroundColor='#007bff'">
+                            📄 Download PDF
+                        </button>
+                    </div>
+                    
+                    <style>
+                        @media print {
+                            /* Hide the PDF button when printing */
+                            div[style*="position: fixed"] {
+                                display: none !important;
+                            }
+                            
+                            /* Optimize print layout */
+                            body {
+                                font-size: 12px;
+                                line-height: 1.4;
+                                margin: 0;
+                                padding: 20px;
+                            }
+                            
+                            .chart-container {
+                                page-break-inside: avoid;
+                                margin-bottom: 20px;
+                            }
+                            
+                            .section {
+                                page-break-inside: avoid;
+                                margin-bottom: 15px;
+                            }
+                            
+                            h1, h2, h3 {
+                                page-break-after: avoid;
+                            }
+                        }
+                    </style>
+                    """
+                    
+                    # Insert the PDF button right after the body tag
+                    html_content = html_content.replace('<body>', f'<body>{pdf_button_html}')
+                    
+                    # Save to assets folder so it can be served
+                    import datetime
+                    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+                    filename = f"{selected_athlete}_report_{timestamp}.html"
+                    
+                    # Create assets folder if it doesn't exist
+                    assets_folder = "assets"
+                    if not os.path.exists(assets_folder):
+                        os.makedirs(assets_folder)
+                    
+                    filepath = os.path.join(assets_folder, filename)
+                    with open(filepath, 'w', encoding='utf-8') as f:
+                        f.write(html_content)
+                    
+                    # Create the URL for the assets file
+                    report_url = f"/assets/{filename}"
+                    
                     return html.Div([
                         html.P("✓ Report generated successfully!", style={'color': 'green', 'margin': '5px 0'}),
                         html.P(f"Files processed: {athlete_files_processed}", style={'color': 'blue', 'margin': '5px 0'}),
                         html.P("Opening report in new tab...", style={'color': 'blue', 'margin': '5px 0', 'font-size': '12px'})
-                    ]), download_url
+                    ]), report_url
                 else:
                     return html.Div("Failed to generate report", style={'color': 'red'}), None
                     

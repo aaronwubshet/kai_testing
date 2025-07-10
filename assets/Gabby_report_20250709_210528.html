@@ -1,0 +1,460 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Movement Analysis Report - Gabby</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                    color: #333;
+                }
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    background: white;
+                    padding: 30px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                }
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #e9ecef;
+                    padding-bottom: 20px;
+                }
+                .header h1 {
+                    margin: 0;
+                    color: #2c3e50;
+                    font-size: 28px;
+                }
+                .header .logo {
+                    background: #3498db;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    font-weight: bold;
+                }
+                .profile-section {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 30px;
+                    gap: 30px;
+                }
+                .profile-info {
+                    flex: 1;
+                }
+                .profile-info h2 {
+                    margin: 0 0 10px 0;
+                    color: #2c3e50;
+                }
+                .profile-info p {
+                    margin: 5px 0;
+                    color: #7f8c8d;
+                }
+                .overall-score {
+                    text-align: center;
+                }
+                .score-circle {
+                    margin: 10px auto;
+                }
+                .score-description {
+                    margin-top: 10px;
+                    font-size: 14px;
+                    color: #7f8c8d;
+                }
+                .exercise-section {
+                    margin: 30px 0;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border-left: 5px solid #3498db;
+                }
+                .exercise-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+                .exercise-title {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                    margin: 0;
+                }
+                .exercise-score {
+                    text-align: center;
+                }
+                .metrics-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 15px;
+                    margin: 20px 0;
+                }
+                .metric-card {
+                    background: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    border: 1px solid #e9ecef;
+                }
+                .metric-name {
+                    font-weight: bold;
+                    color: #2c3e50;
+                    margin-bottom: 5px;
+                }
+                .metric-value {
+                    font-size: 18px;
+                    color: #3498db;
+                    margin-bottom: 3px;
+                }
+                .metric-range {
+                    font-size: 12px;
+                    color: #7f8c8d;
+                }
+                .recommendations {
+                    margin-top: 20px;
+                    padding: 15px;
+                    background: #e8f4f8;
+                    border-radius: 8px;
+                    border-left: 4px solid #3498db;
+                }
+                .recommendations h4 {
+                    margin: 0 0 10px 0;
+                    color: #2c3e50;
+                }
+                .recommendations ul {
+                    margin: 0;
+                    padding-left: 20px;
+                }
+                .recommendations li {
+                    margin: 5px 0;
+                    color: #34495e;
+                }
+                .score-good { color: #27ae60; }
+                .score-medium { color: #f39c12; }
+                .score-poor { color: #e74c3c; }
+            </style>
+        </head>
+        <body>
+                    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+                        <button onclick="window.print()" style="
+                            background-color: #007bff;
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: bold;
+                            box-shadow: 0 2px 5px rgba(0,123,255,0.3);
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.backgroundColor='#0056b3'" 
+                           onmouseout="this.style.backgroundColor='#007bff'">
+                            📄 Download PDF
+                        </button>
+                    </div>
+                    
+                    <style>
+                        @media print {
+                            /* Hide the PDF button when printing */
+                            div[style*="position: fixed"] {
+                                display: none !important;
+                            }
+                            
+                            /* Optimize print layout */
+                            body {
+                                font-size: 12px;
+                                line-height: 1.4;
+                                margin: 0;
+                                padding: 20px;
+                            }
+                            
+                            .chart-container {
+                                page-break-inside: avoid;
+                                margin-bottom: 20px;
+                            }
+                            
+                            .section {
+                                page-break-inside: avoid;
+                                margin-bottom: 15px;
+                            }
+                            
+                            h1, h2, h3 {
+                                page-break-after: avoid;
+                            }
+                        }
+                    </style>
+                    
+            <div class="container">
+                <div class="header">
+                    <h1>Movement Analysis Report</h1>
+                    <div class="logo">KAI Analytics</div>
+                </div>
+                
+                <div class="profile-section">
+                    <div class="profile-info">
+                        <h2>Name: Gabby</h2>
+                        <p>Report Date: 07/09/25</p>
+                        <p>Exercises Analyzed: 12</p>
+                        <div class="score-description">
+                            <p><strong>Mobility Score:</strong> Reflects your range of motion vs. optimal range. 
+                            Scores are based on biomechanical research and peer-reviewed sources.</p>
+                        </div>
+                    </div>
+                    <div class="overall-score">
+                        <div class="score-circle">
+                            <img src="data:image/png;base64,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" alt="Overall Score" />
+                        </div>
+                        <div style="font-weight: bold; margin-top: 10px;">MOBILITY</div>
+                    </div>
+                </div>
+        
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">OVERHEAD SQUAT</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Overhead Squat Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">STANDING JUMP</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Standing Jump Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">SQUAT</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Squat Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">PUSH UP</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Push Up Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">SQUAT</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Squat Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">STANDING JUMP</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Standing Jump Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">OVERHEAD SQUAT</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFkAAABZCAYAAABVC4ivAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/bCgiHAAAACXBIWXMAAA9hAAAPYQGoP6dpAAAJb0lEQVR4nO2dW0yU2xXH/wNlZmRQiKDxghhHMmC90HghEawKB0vV9GjEqiclGslpmqY+mFiN0fjsJfbFl3rac/SxDx4MaSMHPR5ykGokQi2hB7AYhRpuOqNchsvMMLP68A2eTwTca3/f7JnTzj/Z8cG19lr7N5v9XWbtPRYiQlyRVUK0E/h/UByyAsUhK1AcsgLFIStQHLICxSErUByyAv0o2gnMoAwAG3QtD0AqgDnk99l9/2y02H6yacxitY4BGATQDKBJ19zRSXt6xQrkdACfACiGBjVrJkMKBML/+h0Wq9UB7QNZCWCfzuw/0GDXAvgLAE9EshaUJYqP1RYApQA+BfALAFYRp9CIF/7vmmFdnYcER4qIix/A3wB8DuA2AOUDjsaabAVQAaAFwFcAyiAI2EC8snCslnDsSMZ7T6oh7wDwbwBfAFitODbCMb8I57BDVVBVy8VcAH8A8GtRh6GhIdy7dw91dXVoa2tDR0cHPB4PvF4vghMTcKSkIC0tDU6nEy6XC4WFhSgqKkJmZiYnrz8B+D2AYd5wmCKiSLcSIuokQdXW1tKBAwfIZrMRtPWT1bZs2ULXr1+nQCAgGrKTiD6KJINIwk0hoquiI21ubqbi4mIpsNO17OxsqqysFA0fIqI/hnP+wUDOIKJG0RFeunSJrFaraYD1rby8nIaGhkRTaQznHvOQM4moVWREgUCAjhw5EhG4+rZ+/Xrq6+sTBd1KREtjGXImET0XGUkoFKKDBw9GHPBky83NJY/HIwr6mZmgzV4i2kRHcerUKWWA9RdFv98vmmIrmbR0mAU4hRhrcE1NDVksFuWQAdCZM2dE06TwmAxfDM26T74K4Dcihl6vFzk5Oejp6WEFsNlsKCkpgTMrC9aRIbwYGce39fV4+fIlq5/ExEQ0NDRgw4YNoi5XAfyWFWSqTJjFJZypce7cOfbsO3r0KPX29hIRUdA7TGMNf6egd5jGx8fpypUrlJSUxOpv+/btnJRDZPA+2ijguUTUJZqtx+Mhh8PBAnLy5Ml3+tBDnlR1dTUlJiay+r1z544wZdIeWObKcjIK+TNOphcvXmSBWLNmzXtPbtNBJiI6duwYq+/du3dzUifSHqyUQ97BzdLpdLJAVFdXv9fHTJDfvHlDycnJwn0nJCRQV5fwH+GkSgTZvNNk38JZAfyZ49DU1IRnz54J2y9ZsgSlpaXC9mlpadizZ4+wfSgUQmVlpbB9WJ9D4jWpLORyAMs5DlVVVawApaWlSEjgpbdz506W/c2bN1n20Mb8K66TDGQLgBNcp9raWpZ9YWEhNwQ2b97Msm9oaMDY2Bg3DHvsMpBLAfyY4+Dz+dDU1MQKsm7dOpY9AKxcuRLJycnC9oFAAI8ePeKGWQ2NgbBkIH/KdWhpaYHP52P5uFwubhhYLBa2X2NjIzsOmAy4kNOhfenJUnt7O8t+3rx5SE1N5YYBACxbtoxlz80trI8BzBc15kL+BBJX1ydPnrDsFy9ezA3xVosWLWLZc3MLywqNhZC4kIuZ9gCA7u5uln16erpMGClfbm46CbPgQhZ+q6JXf38/y152qZDx5eamkzALDuQMzFLZM5vcbl7VFOcOwaiv1+vF+Pi4TKjl0K5RHxQHstQsBoDR0VGWvd1ulw0l5StxrzwpISZKIPv9fpY990lPr8TERLYP9/ZSp9iBHAgXCYrKCGQZX+4k0Ml0yHmSiSApKYllHwqFZENJ+Vqt0qVxQkw4kKUv+dxBBINB2VCYmJhg+9hsNtlwQkw4kOdIJoI5c3iuBi5EUr7c/PSuIkYcyNKX/AULFrDsuXcjRnxTUlKM3M0IOSopnV24cCHLfmBgYMb/s4TXd8sM6/xsvtOJm5uMONsZxgE4ZIIwy1nh8cy8+8BitcGeP/O75tevX7NiLV26lGU/RUJPMZyZLL1Qcl8/9vb2yoZi13Pk5ORIx4IgEw7kQclEkJuby7IfGRmZdTbPphcvXrDsublNkRATDuRmyUSwdu1a9m1cR0cHO04oFGL7bdy4kR1HJyEmHMi87490stvtnLIoAEBzM/8zbW9vZz0iJyUlIT8/nx1HJyEmSiADQHEx71X0/fv32TEePHjAss/PzzdyjwzEGuS9e/ey7G/fvs1+8quurmbZ79u378NGs0uMCbMahl1yo9eKFStYFURVVVXCfff397O2RFgsFurs7DQynE6KUJnWTSNZXbhwgQV51apVwkXbFRUVrL537dplZChERJUUIcjHjGTldrtZ9WoA6Pjx4x8ebWUlu6i8pqbGyFCIiH5HEYKcTkQ+I5mdPXuWBQMAHT58+G19sl6jo6N0+fJldtns1q1bjQyBSGMwnwS5yVTafwltr7KUhoeH4XK50NfXx/KbrLTPzs6G3W5HZ2cnamtr8erVK1Y/CQkJePjwITZt2sTym6IvAfxS2Fr009C1nxudBrdu3WLPZrPa6dOnjaZPRFRKDGYykC1E9C+jWZ44cUI54IKCAvL5DK12FB47i5kMZBBRhdFMg8EglZWVKQPscrnI7XYbTZuI6Cgpgmwlxqb0meT3+6m8vDzigPPy8qinp8douhQes5UUQQZJbGeYTqFQiM6fP8/ewSTaDh06RIODg2akSiS5ncEIZBBzY85sevz4MW3bts00uE6nk27cuGFWekRR2pgD0rZdGV429Lp79y7t379f+tSAgoICunbtGmd7r4g6ycAWMzN2pJYA+NpoJ1M1MDCAuro61NfXo7W1FU+fPoXb7cbIyAiCwSAcDgdSU1PfntxSUFCA4uJiZGVJlevNJoJ2lM43sh0o3/b7A5Thbb9mQU4B8C0MlHLFqBoBFAHwGunEzIOeMgDcA7DKrA6jrDYAP4UJB/eZWXfhhrZ2PTexz2jpObSxmHIyotnFLd3QPv02k/tVqckZLL3PYaoiUUHUDWArDH5dFSU1QsvdNMBA5Mq03AC2Q7sym7boR1AELdciRODEWhUnHH4E7ejG5ZEOJKkuaOd38vYlM6Si4PAbAGuhHdkYa/oMWm4RAwyoP9p3B7QjHKI9q7ugbd29qyKY6lNnvwbggvbn+Z3i2AjHrAjnoAQwEP1Dqn8GbUZ9jMidaewH8Fd8f0i1ckUTsl7z8e5x60aXky68e9w6r2jZZMUK5KnKALAe0/xwAL7fQjAOrT546g8H/AMx9sMBsQr5f0rx3xlRoDhkBYpDVqA4ZAWKQ1agOGQFikNWoDhkBYpDVqD/AmzjJNqORI/rAAAAAElFTkSuQmCC" alt="Overhead Squat Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">PUSH UP</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFkAAABZCAYAAABVC4ivAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/bCgiHAAAACXBIWXMAAA9hAAAPYQGoP6dpAAAJb0lEQVR4nO2dW0yU2xXH/wNlZmRQiKDxghhHMmC90HghEawKB0vV9GjEqiclGslpmqY+mFiN0fjsJfbFl3rac/SxDx4MaSMHPR5ykGokQi2hB7AYhRpuOqNchsvMMLP68A2eTwTca3/f7JnTzj/Z8cG19lr7N5v9XWbtPRYiQlyRVUK0E/h/UByyAsUhK1AcsgLFIStQHLICxSErUByyAv0o2gnMoAwAG3QtD0AqgDnk99l9/2y02H6yacxitY4BGATQDKBJ19zRSXt6xQrkdACfACiGBjVrJkMKBML/+h0Wq9UB7QNZCWCfzuw/0GDXAvgLAE9EshaUJYqP1RYApQA+BfALAFYRp9CIF/7vmmFdnYcER4qIix/A3wB8DuA2AOUDjsaabAVQAaAFwFcAyiAI2EC8snCslnDsSMZ7T6oh7wDwbwBfAFitODbCMb8I57BDVVBVy8VcAH8A8GtRh6GhIdy7dw91dXVoa2tDR0cHPB4PvF4vghMTcKSkIC0tDU6nEy6XC4WFhSgqKkJmZiYnrz8B+D2AYd5wmCKiSLcSIuokQdXW1tKBAwfIZrMRtPWT1bZs2ULXr1+nQCAgGrKTiD6KJINIwk0hoquiI21ubqbi4mIpsNO17OxsqqysFA0fIqI/hnP+wUDOIKJG0RFeunSJrFaraYD1rby8nIaGhkRTaQznHvOQM4moVWREgUCAjhw5EhG4+rZ+/Xrq6+sTBd1KREtjGXImET0XGUkoFKKDBw9GHPBky83NJY/HIwr6mZmgzV4i2kRHcerUKWWA9RdFv98vmmIrmbR0mAU4hRhrcE1NDVksFuWQAdCZM2dE06TwmAxfDM26T74K4Dcihl6vFzk5Oejp6WEFsNlsKCkpgTMrC9aRIbwYGce39fV4+fIlq5/ExEQ0NDRgw4YNoi5XAfyWFWSqTJjFJZypce7cOfbsO3r0KPX29hIRUdA7TGMNf6egd5jGx8fpypUrlJSUxOpv+/btnJRDZPA+2ijguUTUJZqtx+Mhh8PBAnLy5Ml3+tBDnlR1dTUlJiay+r1z544wZdIeWObKcjIK+TNOphcvXmSBWLNmzXtPbtNBJiI6duwYq+/du3dzUifSHqyUQ97BzdLpdLJAVFdXv9fHTJDfvHlDycnJwn0nJCRQV5fwH+GkSgTZvNNk38JZAfyZ49DU1IRnz54J2y9ZsgSlpaXC9mlpadizZ4+wfSgUQmVlpbB9WJ9D4jWpLORyAMs5DlVVVawApaWlSEjgpbdz506W/c2bN1n20Mb8K66TDGQLgBNcp9raWpZ9YWEhNwQ2b97Msm9oaMDY2Bg3DHvsMpBLAfyY4+Dz+dDU1MQKsm7dOpY9AKxcuRLJycnC9oFAAI8ePeKGWQ2NgbBkIH/KdWhpaYHP52P5uFwubhhYLBa2X2NjIzsOmAy4kNOhfenJUnt7O8t+3rx5SE1N5YYBACxbtoxlz80trI8BzBc15kL+BBJX1ydPnrDsFy9ezA3xVosWLWLZc3MLywqNhZC4kIuZ9gCA7u5uln16erpMGClfbm46CbPgQhZ+q6JXf38/y152qZDx5eamkzALDuQMzFLZM5vcbl7VFOcOwaiv1+vF+Pi4TKjl0K5RHxQHstQsBoDR0VGWvd1ulw0l5StxrzwpISZKIPv9fpY990lPr8TERLYP9/ZSp9iBHAgXCYrKCGQZX+4k0Ml0yHmSiSApKYllHwqFZENJ+Vqt0qVxQkw4kKUv+dxBBINB2VCYmJhg+9hsNtlwQkw4kOdIJoI5c3iuBi5EUr7c/PSuIkYcyNKX/AULFrDsuXcjRnxTUlKM3M0IOSopnV24cCHLfmBgYMb/s4TXd8sM6/xsvtOJm5uMONsZxgE4ZIIwy1nh8cy8+8BitcGeP/O75tevX7NiLV26lGU/RUJPMZyZLL1Qcl8/9vb2yoZi13Pk5ORIx4IgEw7kQclEkJuby7IfGRmZdTbPphcvXrDsublNkRATDuRmyUSwdu1a9m1cR0cHO04oFGL7bdy4kR1HJyEmHMi87490stvtnLIoAEBzM/8zbW9vZz0iJyUlIT8/nx1HJyEmSiADQHEx71X0/fv32TEePHjAss/PzzdyjwzEGuS9e/ey7G/fvs1+8quurmbZ79u378NGs0uMCbMahl1yo9eKFStYFURVVVXCfff397O2RFgsFurs7DQynE6KUJnWTSNZXbhwgQV51apVwkXbFRUVrL537dplZChERJUUIcjHjGTldrtZ9WoA6Pjx4x8ebWUlu6i8pqbGyFCIiH5HEYKcTkQ+I5mdPXuWBQMAHT58+G19sl6jo6N0+fJldtns1q1bjQyBSGMwnwS5yVTafwltr7KUhoeH4XK50NfXx/KbrLTPzs6G3W5HZ2cnamtr8erVK1Y/CQkJePjwITZt2sTym6IvAfxS2Fr009C1nxudBrdu3WLPZrPa6dOnjaZPRFRKDGYykC1E9C+jWZ44cUI54IKCAvL5DK12FB47i5kMZBBRhdFMg8EglZWVKQPscrnI7XYbTZuI6Cgpgmwlxqb0meT3+6m8vDzigPPy8qinp8douhQes5UUQQZJbGeYTqFQiM6fP8/ewSTaDh06RIODg2akSiS5ncEIZBBzY85sevz4MW3bts00uE6nk27cuGFWekRR2pgD0rZdGV429Lp79y7t379f+tSAgoICunbtGmd7r4g6ycAWMzN2pJYA+NpoJ1M1MDCAuro61NfXo7W1FU+fPoXb7cbIyAiCwSAcDgdSU1PfntxSUFCA4uJiZGVJlevNJoJ2lM43sh0o3/b7A5Thbb9mQU4B8C0MlHLFqBoBFAHwGunEzIOeMgDcA7DKrA6jrDYAP4UJB/eZWXfhhrZ2PTexz2jpObSxmHIyotnFLd3QPv02k/tVqckZLL3PYaoiUUHUDWArDH5dFSU1QsvdNMBA5Mq03AC2Q7sym7boR1AELdciRODEWhUnHH4E7ejG5ZEOJKkuaOd38vYlM6Si4PAbAGuhHdkYa/oMWm4RAwyoP9p3B7QjHKI9q7ugbd29qyKY6lNnvwbggvbn+Z3i2AjHrAjnoAQwEP1Dqn8GbUZ9jMidaewH8Fd8f0i1ckUTsl7z8e5x60aXky68e9w6r2jZZMUK5KnKALAe0/xwAL7fQjAOrT546g8H/AMx9sMBsQr5f0rx3xlRoDhkBYpDVqA4ZAWKQ1agOGQFikNWoDhkBYpDVqD/AmzjJNqORI/rAAAAAElFTkSuQmCC" alt="Push Up Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">PUSH UP</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Push Up Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">OVERHEAD SQUAT</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Overhead Squat Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">STANDING JUMP</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,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" alt="Standing Jump Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div class="exercise-section">
+                    <div class="exercise-header">
+                        <h3 class="exercise-title">SQUAT</h3>
+                        <div class="exercise-score">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFkAAABZCAYAAABVC4ivAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjcuMSwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/bCgiHAAAACXBIWXMAAA9hAAAPYQGoP6dpAAAJb0lEQVR4nO2dW0yU2xXH/wNlZmRQiKDxghhHMmC90HghEawKB0vV9GjEqiclGslpmqY+mFiN0fjsJfbFl3rac/SxDx4MaSMHPR5ykGokQi2hB7AYhRpuOqNchsvMMLP68A2eTwTca3/f7JnTzj/Z8cG19lr7N5v9XWbtPRYiQlyRVUK0E/h/UByyAsUhK1AcsgLFIStQHLICxSErUByyAv0o2gnMoAwAG3QtD0AqgDnk99l9/2y02H6yacxitY4BGATQDKBJ19zRSXt6xQrkdACfACiGBjVrJkMKBML/+h0Wq9UB7QNZCWCfzuw/0GDXAvgLAE9EshaUJYqP1RYApQA+BfALAFYRp9CIF/7vmmFdnYcER4qIix/A3wB8DuA2AOUDjsaabAVQAaAFwFcAyiAI2EC8snCslnDsSMZ7T6oh7wDwbwBfAFitODbCMb8I57BDVVBVy8VcAH8A8GtRh6GhIdy7dw91dXVoa2tDR0cHPB4PvF4vghMTcKSkIC0tDU6nEy6XC4WFhSgqKkJmZiYnrz8B+D2AYd5wmCKiSLcSIuokQdXW1tKBAwfIZrMRtPWT1bZs2ULXr1+nQCAgGrKTiD6KJINIwk0hoquiI21ubqbi4mIpsNO17OxsqqysFA0fIqI/hnP+wUDOIKJG0RFeunSJrFaraYD1rby8nIaGhkRTaQznHvOQM4moVWREgUCAjhw5EhG4+rZ+/Xrq6+sTBd1KREtjGXImET0XGUkoFKKDBw9GHPBky83NJY/HIwr6mZmgzV4i2kRHcerUKWWA9RdFv98vmmIrmbR0mAU4hRhrcE1NDVksFuWQAdCZM2dE06TwmAxfDM26T74K4Dcihl6vFzk5Oejp6WEFsNlsKCkpgTMrC9aRIbwYGce39fV4+fIlq5/ExEQ0NDRgw4YNoi5XAfyWFWSqTJjFJZypce7cOfbsO3r0KPX29hIRUdA7TGMNf6egd5jGx8fpypUrlJSUxOpv+/btnJRDZPA+2ijguUTUJZqtx+Mhh8PBAnLy5Ml3+tBDnlR1dTUlJiay+r1z544wZdIeWObKcjIK+TNOphcvXmSBWLNmzXtPbtNBJiI6duwYq+/du3dzUifSHqyUQ97BzdLpdLJAVFdXv9fHTJDfvHlDycnJwn0nJCRQV5fwH+GkSgTZvNNk38JZAfyZ49DU1IRnz54J2y9ZsgSlpaXC9mlpadizZ4+wfSgUQmVlpbB9WJ9D4jWpLORyAMs5DlVVVawApaWlSEjgpbdz506W/c2bN1n20Mb8K66TDGQLgBNcp9raWpZ9YWEhNwQ2b97Msm9oaMDY2Bg3DHvsMpBLAfyY4+Dz+dDU1MQKsm7dOpY9AKxcuRLJycnC9oFAAI8ePeKGWQ2NgbBkIH/KdWhpaYHP52P5uFwubhhYLBa2X2NjIzsOmAy4kNOhfenJUnt7O8t+3rx5SE1N5YYBACxbtoxlz80trI8BzBc15kL+BBJX1ydPnrDsFy9ezA3xVosWLWLZc3MLywqNhZC4kIuZ9gCA7u5uln16erpMGClfbm46CbPgQhZ+q6JXf38/y152qZDx5eamkzALDuQMzFLZM5vcbl7VFOcOwaiv1+vF+Pi4TKjl0K5RHxQHstQsBoDR0VGWvd1ulw0l5StxrzwpISZKIPv9fpY990lPr8TERLYP9/ZSp9iBHAgXCYrKCGQZX+4k0Ml0yHmSiSApKYllHwqFZENJ+Vqt0qVxQkw4kKUv+dxBBINB2VCYmJhg+9hsNtlwQkw4kOdIJoI5c3iuBi5EUr7c/PSuIkYcyNKX/AULFrDsuXcjRnxTUlKM3M0IOSopnV24cCHLfmBgYMb/s4TXd8sM6/xsvtOJm5uMONsZxgE4ZIIwy1nh8cy8+8BitcGeP/O75tevX7NiLV26lGU/RUJPMZyZLL1Qcl8/9vb2yoZi13Pk5ORIx4IgEw7kQclEkJuby7IfGRmZdTbPphcvXrDsublNkRATDuRmyUSwdu1a9m1cR0cHO04oFGL7bdy4kR1HJyEmHMi87490stvtnLIoAEBzM/8zbW9vZz0iJyUlIT8/nx1HJyEmSiADQHEx71X0/fv32TEePHjAss/PzzdyjwzEGuS9e/ey7G/fvs1+8quurmbZ79u378NGs0uMCbMahl1yo9eKFStYFURVVVXCfff397O2RFgsFurs7DQynE6KUJnWTSNZXbhwgQV51apVwkXbFRUVrL537dplZChERJUUIcjHjGTldrtZ9WoA6Pjx4x8ebWUlu6i8pqbGyFCIiH5HEYKcTkQ+I5mdPXuWBQMAHT58+G19sl6jo6N0+fJldtns1q1bjQyBSGMwnwS5yVTafwltr7KUhoeH4XK50NfXx/KbrLTPzs6G3W5HZ2cnamtr8erVK1Y/CQkJePjwITZt2sTym6IvAfxS2Fr009C1nxudBrdu3WLPZrPa6dOnjaZPRFRKDGYykC1E9C+jWZ44cUI54IKCAvL5DK12FB47i5kMZBBRhdFMg8EglZWVKQPscrnI7XYbTZuI6Cgpgmwlxqb0meT3+6m8vDzigPPy8qinp8douhQes5UUQQZJbGeYTqFQiM6fP8/ewSTaDh06RIODg2akSiS5ncEIZBBzY85sevz4MW3bts00uE6nk27cuGFWekRR2pgD0rZdGV429Lp79y7t379f+tSAgoICunbtGmd7r4g6ycAWMzN2pJYA+NpoJ1M1MDCAuro61NfXo7W1FU+fPoXb7cbIyAiCwSAcDgdSU1PfntxSUFCA4uJiZGVJlevNJoJ2lM43sh0o3/b7A5Thbb9mQU4B8C0MlHLFqBoBFAHwGunEzIOeMgDcA7DKrA6jrDYAP4UJB/eZWXfhhrZ2PTexz2jpObSxmHIyotnFLd3QPv02k/tVqckZLL3PYaoiUUHUDWArDH5dFSU1QsvdNMBA5Mq03AC2Q7sym7boR1AELdciRODEWhUnHH4E7ejG5ZEOJKkuaOd38vYlM6Si4PAbAGuhHdkYa/oMWm4RAwyoP9p3B7QjHKI9q7ugbd29qyKY6lNnvwbggvbn+Z3i2AjHrAjnoAQwEP1Dqn8GbUZ9jMidaewH8Fd8f0i1ckUTsl7z8e5x60aXky68e9w6r2jZZMUK5KnKALAe0/xwAL7fQjAOrT546g8H/AMx9sMBsQr5f0rx3xlRoDhkBYpDVqA4ZAWKQ1agOGQFikNWoDhkBYpDVqD/AmzjJNqORI/rAAAAAElFTkSuQmCC" alt="Squat Score" />
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-grid">
+            
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations</h4>
+                        <ul>
+            <li>Movement pattern shows good quality - maintain current form</li>
+                        </ul>
+                    </div>
+                </div>
+            
+            </div>
+        </body>
+        </html>
+        
