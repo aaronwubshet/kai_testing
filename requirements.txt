@@ -3,3 +3,8 @@ pandas
 plotly
 numpy
 matplotlib
+seaborn
+datetime
+base64
+BytesIO
+json
