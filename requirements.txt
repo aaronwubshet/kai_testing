@@ -4,6 +4,4 @@ plotly
 numpy
 matplotlib
 seaborn
-datetime
-BytesIO
-json
+
