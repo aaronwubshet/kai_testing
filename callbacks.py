@@ -295,6 +295,18 @@ class MetricsSelectionCallbacks:
             
             raise PreventUpdate
 
+        @app.callback(
+            [Output(COMPONENT_IDS['metrics_store'], 'data', allow_duplicate=True),
+             Output({'type': 'hierarchical-dropdown', 'layer': 'metrics'}, 'value', allow_duplicate=True)],
+            [Input({'type': 'clear-all-btn', 'component': 'metrics'}, 'n_clicks')],
+            prevent_initial_call=True
+        )
+        def clear_all_metrics(n_clicks):
+            """Clear all selected metrics when Clear All button is clicked"""
+            if n_clicks and n_clicks > 0:
+                return [], []  # Clear both persistent store and dropdown
+            raise PreventUpdate
+
 
 class DataStoreCallbacks:
     """Callbacks for managing data stores and persistent state"""
