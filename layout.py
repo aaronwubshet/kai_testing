@@ -232,10 +232,20 @@ class VideoAnalysisLayout:
                     muted=True,  # Required for autoplay in many browsers
                     style={
                         'width': '100%',
-                        'height': '350px',
+                        'max-height': '400px',
                         'border': f'2px solid {COLORS["danger"]}',
                         'borderRadius': '8px',
-                        'object-fit': 'cover'
+                        'object-fit': 'contain'  # Shows complete video without cropping
+                    }
+                ),
+                html.Div(
+                    id='video-status',
+                    children="Select an athlete, exercise, and attempt to view video",
+                    style={
+                        'text-align': 'center',
+                        'margin-top': '10px',
+                        'color': COLORS['secondary'],
+                        'font-style': 'italic'
                     }
                 )
             ], style={'display': 'flex', 'flex-direction': 'column', 'align-items': 'center'})

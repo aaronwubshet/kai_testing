@@ -139,7 +139,7 @@ class HierarchicalSelector:
         return None
     
     def construct_video_filename(self, athlete, exercise, attempt):
-        """Construct video filename from hierarchical selection (new format: MMDDYYYY_athleteID_workoutname_attemptNumber.webm)"""
+        """Construct video filename from hierarchical selection (supports both .webm and .mp4 formats)"""
         if not all([athlete, exercise, attempt]):
             return None
         
@@ -152,9 +152,21 @@ class HierarchicalSelector:
         if not workout_name:
             return None
         
-        # Construct video filename: MMDDYYYY_athleteID_workoutname_attemptNumber.webm
-        video_filename = f"07092025_{athlete_id}_{workout_name}_{attempt}.webm"
-        return video_filename
+        # Try both .mp4 and .webm extensions
+        base_filename = f"07092025_{athlete_id}_{workout_name}_{attempt}"
+        
+        # Check which file format exists in the videos folder
+        import os
+        videos_folder = os.path.join("assets", "videos")
+        
+        for extension in ['.mp4', '.webm']:
+            video_filename = base_filename + extension
+            video_path = os.path.join(videos_folder, video_filename)
+            if os.path.exists(video_path):
+                return video_filename
+        
+        # If no file found, return the .mp4 version (most common)
+        return base_filename + '.mp4'
     
     def get_files_for_athlete_exercise(self, athlete, exercise):
         """Get files matching athlete and exercise"""

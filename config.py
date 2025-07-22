@@ -24,30 +24,30 @@ sto_files = [f for f in os.listdir(STO_FOLDER) if f.endswith('.sto')]
 # --- ATHLETE PROFILES ---
 athlete_profiles = {
     'Gabby': {
-        'name': 'Gabby Martinez',
+        'name': 'Gabby Rizika',
         'photo': 'images/gabby.jpeg',
         'age': 22,
-        'weight': '125 lbs',
+        'weight': '135 lbs',
         'height': '5\'6"',
         'sex': 'Female',
         'sport': 'Basketball',
         'position': 'Point Guard'
     },
     'Hannah': {
-        'name': 'Hannah Johnson',
+        'name': 'Hannah Steadman',
         'photo': 'images/hannah.jpeg',
         'age': 20,
-        'weight': '135 lbs',
-        'height': '5\'8"',
+        'weight': '125 lbs',
+        'height': '5\'3"',
         'sex': 'Female',
         'sport': 'Basketball',
         'position': 'Shooting Guard'
     },
     'Aaron': {
-        'name': 'Aaron Thompson',
+        'name': 'Aaron Wubshet',
         'photo': 'images/aaron.jpeg',
         'age': 24,
-        'weight': '180 lbs',
+        'weight': '2200 lbs',
         'height': '6\'2"',
         'sex': 'Male',
         'sport': 'Basketball',

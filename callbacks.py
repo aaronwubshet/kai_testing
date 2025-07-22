@@ -332,21 +332,39 @@ class VideoPlayerCallbacks:
     @staticmethod
     def register_callbacks(app):
         @app.callback(
-            Output(COMPONENT_IDS['video_player'], 'src'),
+            [Output(COMPONENT_IDS['video_player'], 'src'),
+             Output('video-status', 'children')],
             [Input({'type': 'hierarchical-dropdown', 'layer': 'athlete'}, 'value'),
              Input({'type': 'hierarchical-dropdown', 'layer': 'exercise'}, 'value'),
              Input({'type': 'hierarchical-dropdown', 'layer': 'attempt'}, 'value')]
         )
         def update_video_source(selected_athlete, selected_exercise, selected_attempt):
             """Update video source based on hierarchical selections"""
+            print(f"DEBUG: Video callback triggered with athlete={selected_athlete}, exercise={selected_exercise}, attempt={selected_attempt}")
+            
             if selected_athlete and selected_exercise and selected_attempt:
                 video_filename = hierarchical_selector.construct_video_filename(
                     selected_athlete, selected_exercise, selected_attempt
                 )
+                print(f"DEBUG: Constructed video filename: {video_filename}")
+                
                 if video_filename:
-                    return f'/assets/videos/{video_filename}'
-            
-            return ''
+                    video_path = f'/assets/videos/{video_filename}'
+                    print(f"DEBUG: Returning video path: {video_path}")
+                    
+                    # Check if file actually exists
+                    import os
+                    full_path = os.path.join("assets", "videos", video_filename)
+                    if os.path.exists(full_path):
+                        return video_path, f"Playing: {video_filename}"
+                    else:
+                        return '', f"Video not found: {video_filename}"
+                else:
+                    print("DEBUG: No video filename constructed")
+                    return '', "No video available for this selection"
+            else:
+                print("DEBUG: Missing required selections")
+                return '', "Select an athlete, exercise, and attempt to view video"
 
 
 class PlotCallbacks:
